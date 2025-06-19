@@ -1,5 +1,5 @@
 {
-  "name": "fantasy-adp-api",
+  "name": "ADP-Server",
   "version": "1.0.0",
   "description": "Fantasy Football ADP API Server",
   "main": "ADP-API.js",
