@@ -238,7 +238,7 @@ app.get('/api/players/:format', async (req, res) => {
             actualFormat = 'Half PPR';
             break;
         case 'standard':
-        case 'std':
+        case 'stan':
             actualFormat = 'Standard';
             break;
         default:
