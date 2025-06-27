@@ -22,7 +22,6 @@ let cachedData = {
     'PPR': null,
     'Half PPR': null,
     'Standard': null,
-    'Superflex': null
 };
 let lastFetchTime = {};
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
@@ -32,7 +31,6 @@ const endpoints = {
     'PPR': 'https://www.fantasypros.com/nfl/adp/ppr-overall.php',
     'Half PPR': 'https://www.fantasypros.com/nfl/adp/half-point-ppr-overall.php',
     'Standard': 'https://www.fantasypros.com/nfl/adp/overall.php',
-    'Superflex': 'https://www.fantasypros.com/nfl/adp/superflex-overall.php'
 };
 
 // Parse FantasyPros HTML to extract player data
@@ -216,7 +214,7 @@ app.get('/', (req, res) => {
     res.json({
         message: 'Fantasy Football ADP API',
         endpoints: {
-            '/api/players/:format': 'Get ADP data for scoring format (PPR, Half PPR, Standard, Superflex)',
+            '/api/players/:format': 'Get ADP data for scoring format (PPR, Half PPR, Standard)',
             '/api/players': 'Get ADP data (defaults to Half PPR)'
         },
         status: 'running'
@@ -243,20 +241,22 @@ app.get('/api/players/:format', async (req, res) => {
         case 'std':
             actualFormat = 'Standard';
             break;
-        case 'superflex':
-        case 'sf':
-            actualFormat = 'Superflex';
-            break;
         default:
             return res.status(400).json({
                 error: 'Invalid format',
-                supportedFormats: ['PPR', 'Half PPR', 'Standard', 'Superflex']
+                supportedFormats: ['PPR', 'Half PPR', 'Standard']
             });
     }
     
     try {
         const players = await getAdpData(actualFormat);
         res.json({
+            toggles: {
+                adp: false,
+                tiers: false,
+                risk: true,
+                notes: true
+            },
             format: actualFormat,
             players: players,
             lastUpdated: new Date(lastFetchTime[actualFormat]).toISOString(),
@@ -275,6 +275,12 @@ app.get('/api/players', async (req, res) => {
     try {
         const players = await getAdpData('Half PPR');
         res.json({
+            toggles: {
+                adp: false,
+                tiers: false,
+                risk: true,
+                notes: true
+            },
             format: 'Half PPR',
             players: players,
             lastUpdated: new Date(lastFetchTime['Half PPR']).toISOString(),
